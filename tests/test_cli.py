@@ -103,3 +103,20 @@ def test_numeric_invalid_value(runner):
 
 # endregion
 
+
+# region TEXT
+def test_text_tokenize(runner):
+    result = runner.invoke(cli, ["text", "tokenize", "Hello, World!"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "hello world"
+
+def test_text_remove_stop_words(runner):
+    result = runner.invoke(
+        cli, ["text", "remove-stop-words", "The cat and dog", "-s", "the", "-s", "AND"]
+    )
+    assert result.exit_code == 0
+    assert result.output.strip() == "cat dog"
+
+# endregion
+
+

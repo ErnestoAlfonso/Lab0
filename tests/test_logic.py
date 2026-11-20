@@ -122,3 +122,26 @@ def test_log_scale_transformation():
 # endregion
 
 
+# region TEXT
+pytest.mark.parametrize(
+    "txt, expected",
+    [
+        ("Hello, World!", "hello world"),
+        ("snake_case 42", "snake case 42"),
+        ("No punctuation here", "no punctuation here"),
+        ("", ""),
+    ],
+)
+
+
+def test_tokenization_alphanumeric_lower_casing(txt, expected):
+    assert preprocessing.tokenization_alphanumeric_lower_casing(txt) == expected
+
+def test_selection_alphanumerical_spaces():
+    assert preprocessing.selection_alphanumerical_spaces("Hello, World!") == "Hello World"
+
+def test_remove_stop_words():
+    assert preprocessing.remove_stop_words("The cat and dog", ["the", "and"]) == "cat dog"
+
+
+# endregion
