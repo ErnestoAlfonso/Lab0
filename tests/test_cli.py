@@ -64,3 +64,42 @@ def test_clean_group_help_lists_commands(runner):
 
 
 # endregion
+
+
+# region NUMERIC
+@pytest.mark.parametrize(
+    "args, expected",
+    [
+        (["1", "2", "3"], "[0.0, 0.5, 1.0]"),
+        (["--new-min", "10", "--new-max", "20", "1", "2", "3"], "[10.0, 15.0, 20.0]"),
+    ],
+)
+
+
+def test_numeric_normalize(runner, args, expected):
+    result = runner.invoke(cli, ["numeric", "normalize", *args])
+    assert result.exit_code == 0
+    assert result.output.strip() == expected
+
+
+def test_numeric_clip_with_options(runner):
+    result = runner.invoke(
+        cli, ["numeric", "clip", "--lower", "1", "--upper", "2", "0", "1.5", "5"]
+    )
+    assert result.exit_code == 0
+    assert result.output.strip() == "[1.0, 1.5, 2.0]"
+
+
+def test_numeric_to_int(runner):
+    result = runner.invoke(cli, ["numeric", "to-int", "1", "a", "22"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "[1, 22]"
+
+
+def test_numeric_invalid_value(runner):
+    result = runner.invoke(cli, ["numeric", "standardize", "abc"])
+    assert result.exit_code != 0
+
+
+# endregion
+

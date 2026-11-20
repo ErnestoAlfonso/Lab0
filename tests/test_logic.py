@@ -69,3 +69,56 @@ def test_filling_missing_values_parametrized(l_values, fill_value, expected):
 
 
 # endregion
+
+
+# region NUMERICAL TRANSFORMATION
+def test_remove_duplicated_values():
+    assert sorted(preprocessing.remove_duplicated_values([3, 1, 3, 2, 1])) == [1, 2, 3]
+
+
+@pytest.mark.parametrize(
+    "l_values, new_min, new_max, expected",
+    [
+        ([1.0, 2.0, 3.0], 0.0, 1.0, [0.0, 0.5, 1.0]),
+        ([1.0, 2.0, 3.0], 10.0, 20.0, [10.0, 15.0, 20.0]),
+        ([5.0, 5.0], 0.0, 1.0, [0.0, 0.0]),
+        ([], 0.0, 1.0, []),
+    ],
+)
+def test_normalization_min_max(l_values, new_min, new_max, expected):
+    assert preprocessing.normalization_min_max(l_values, new_min, new_max) == expected
+
+
+def test_standarization_z_score_mean_zero():
+    result = preprocessing.standarization_z_score([1.0, 2.0, 3.0, 4.0])
+    assert sum(result) == pytest.approx(0.0)
+
+
+def test_standarization_z_score_constant():
+    assert preprocessing.standarization_z_score([2.0, 2.0]) == [0.0, 0.0]
+
+
+@pytest.mark.parametrize(
+    "lower, upper, expected",
+    [
+        (0.0, 1.0, [0.0, 0.5, 1.0]),
+        (1.0, 2.0, [1.0, 1.0, 2.0]),
+    ],
+)
+def test_clipping_values(lower, upper, expected):
+    assert preprocessing.clipping_values([-1.0, 0.5, 3.0], lower, upper) == expected
+
+
+def test_conversion_to_integers_ignores_non_numeric():
+    assert preprocessing.conversion_to_integers(["1", "a", "22"]) == [1, 22]
+
+
+def test_log_scale_transformation():
+    assert preprocessing.log_scale_transformation([1.0, math.e]) == pytest.approx(
+        [0.0, 1.0]
+    )
+
+
+# endregion
+
+
