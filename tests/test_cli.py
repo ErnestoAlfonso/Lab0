@@ -100,6 +100,16 @@ def test_numeric_invalid_value(runner):
     result = runner.invoke(cli, ["numeric", "standardize", "abc"])
     assert result.exit_code != 0
 
+def test_numeric_standardize(runner):
+    result = runner.invoke(cli, ["numeric", "standardize", "2", "2", "2"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "[0.0, 0.0, 0.0]"
+
+def test_numeric_log(runner):
+    result = runner.invoke(cli, ["numeric", "log", "1"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "[0.0]"
+
 
 # endregion
 
@@ -117,6 +127,40 @@ def test_text_remove_stop_words(runner):
     assert result.exit_code == 0
     assert result.output.strip() == "cat dog"
 
+def test_text_remove_punctuation(runner):
+    result = runner.invoke(cli, ["text", "remove-punctuation", "a-b, c!"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "ab c"
+
+
 # endregion
 
 
+# region STRUCT
+
+def test_struct_flatten(runner):
+    result = runner.invoke(cli, ["struct", "flatten", "[[1], [2, 3], [4]]"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "[1, 2, 3, 4]"
+
+def test_struct_flatten_empty(runner):
+    result = runner.invoke(cli, ["struct", "flatten", "[]"])
+    assert result.exit_code == 0
+    assert result.output.strip() == "[]"
+
+def test_struct_flatten_invalid_json(runner):
+    result = runner.invoke(cli, ["struct", "flatten", "[1, [2, 3], [4]"])
+    assert result.exit_code != 0
+
+
+def test_struct_shuffle_with_seed_is_reproducible(runner):
+    args = ["struct", "shuffle", "--seed", "1", "1", "2", "3", "4", "5"]
+    assert runner.invoke(cli, args).output == runner.invoke(cli, args).output
+
+def test_struct_unique(runner):
+    result = runner.invoke(cli, ["struct", "unique", "a", "b", "a"])
+    assert result.exit_code == 0
+    assert sorted(eval(result.output.strip())) == ["a", "b"]
+
+
+# endregion

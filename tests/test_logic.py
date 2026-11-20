@@ -123,7 +123,7 @@ def test_log_scale_transformation():
 
 
 # region TEXT
-pytest.mark.parametrize(
+@pytest.mark.parametrize(
     "txt, expected",
     [
         ("Hello, World!", "hello world"),
@@ -143,5 +143,19 @@ def test_selection_alphanumerical_spaces():
 def test_remove_stop_words():
     assert preprocessing.remove_stop_words("The cat and dog", ["the", "and"]) == "cat dog"
 
+
+# endregion
+
+
+# region STRUCT
+def test_flatten_matrix():
+    assert preprocessing.flatten_matrix([[1, 2], [3], []]) == [1, 2, 3]
+
+
+def test_shuffle_list_same_elements_and_seed_reproducible():
+    first = preprocessing.shuffle_list(list(range(10)), seed=1)
+    second = preprocessing.shuffle_list(list(range(10)), seed=1)
+    assert first == second
+    assert sorted(first) == list(range(10))
 
 # endregion
