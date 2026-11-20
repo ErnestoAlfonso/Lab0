@@ -97,6 +97,9 @@ def test_standarization_z_score_mean_zero():
 def test_standarization_z_score_constant():
     assert preprocessing.standarization_z_score([2.0, 2.0]) == [0.0, 0.0]
 
+def test_standarization_z_score_empty():
+    assert preprocessing.standarization_z_score([]) == []
+
 
 @pytest.mark.parametrize(
     "lower, upper, expected",
