@@ -1,3 +1,9 @@
+"""Integration tests for the preprocessing logic."""
+
+# pylint: disable=redefined-outer-name
+# pylint: disable=missing-function-docstring
+
+
 import math
 
 import pytest
@@ -97,6 +103,7 @@ def test_standarization_z_score_mean_zero():
 def test_standarization_z_score_constant():
     assert preprocessing.standarization_z_score([2.0, 2.0]) == [0.0, 0.0]
 
+
 def test_standarization_z_score_empty():
     assert preprocessing.standarization_z_score([]) == []
 
@@ -135,16 +142,20 @@ def test_log_scale_transformation():
         ("", ""),
     ],
 )
-
-
 def test_tokenization_alphanumeric_lower_casing(txt, expected):
     assert preprocessing.tokenization_alphanumeric_lower_casing(txt) == expected
 
+
 def test_selection_alphanumerical_spaces():
-    assert preprocessing.selection_alphanumerical_spaces("Hello, World!") == "Hello World"
+    assert (
+        preprocessing.selection_alphanumerical_spaces("Hello, World!") == "Hello World"
+    )
+
 
 def test_remove_stop_words():
-    assert preprocessing.remove_stop_words("The cat and dog", ["the", "and"]) == "cat dog"
+    assert (
+        preprocessing.remove_stop_words("The cat and dog", ["the", "and"]) == "cat dog"
+    )
 
 
 # endregion
@@ -160,5 +171,6 @@ def test_shuffle_list_same_elements_and_seed_reproducible():
     second = preprocessing.shuffle_list(list(range(10)), seed=1)
     assert first == second
     assert sorted(first) == list(range(10))
+
 
 # endregion

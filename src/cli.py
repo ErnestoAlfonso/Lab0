@@ -17,6 +17,7 @@ def _to_float_or_nan(value: str) -> float:
 def cli():
     """General group of the preprocessing command line interface."""
 
+
 # region CLEAN
 @cli.group()
 def clean():
@@ -32,11 +33,18 @@ def remove_missing_values(values):
 
 @clean.command("fill")
 @click.argument("values", nargs=-1)
-@click.option("--fill-value", type=float, default=0,
-              show_default=True, help="Value used to replace the missing values.")
+@click.option(
+    "--fill-value",
+    type=float,
+    default=0,
+    show_default=True,
+    help="Value used to replace the missing values.",
+)
 def filling_missing_values(values, fill_value):
     l_values = [_to_float_or_nan(v) for v in values]
     click.echo(preprocessing.filling_missing_values(l_values, fill_value))
+
+
 # endregion
 
 
@@ -48,10 +56,20 @@ def numeric():
 
 @numeric.command("normalize")
 @click.argument("values", nargs=-1, type=float)
-@click.option("--new-min", type=float, default=0, show_default=True,
-              help="Minimum value of the new range.")
-@click.option("--new-max", type=float, default=1, show_default=True,
-              help="Maximum value of the new range.")
+@click.option(
+    "--new-min",
+    type=float,
+    default=0,
+    show_default=True,
+    help="Minimum value of the new range.",
+)
+@click.option(
+    "--new-max",
+    type=float,
+    default=1,
+    show_default=True,
+    help="Maximum value of the new range.",
+)
 def normalize(values, new_min, new_max):
     click.echo(preprocessing.normalization_min_max(list(values), new_min, new_max))
 
@@ -64,10 +82,20 @@ def standardize(values):
 
 @numeric.command("clip")
 @click.argument("values", nargs=-1, type=float)
-@click.option("--lower", type=float, default=0, show_default=True,
-              help="Minimum value to clip to.")
-@click.option("--upper", type=float, default=1, show_default=True,
-              help="Maximum value to clip to.")
+@click.option(
+    "--lower",
+    type=float,
+    default=0,
+    show_default=True,
+    help="Minimum value to clip to.",
+)
+@click.option(
+    "--upper",
+    type=float,
+    default=1,
+    show_default=True,
+    help="Maximum value to clip to.",
+)
 def clip(values, lower, upper):
     click.echo(preprocessing.clipping_values(list(values), lower, upper))
 
@@ -82,6 +110,8 @@ def conversion_to_integers(values):
 @click.argument("values", nargs=-1, type=float)
 def log_scale_transformation(values):
     click.echo(preprocessing.log_scale_transformation(list(values)))
+
+
 # endregion
 
 
@@ -105,11 +135,15 @@ def remove_punctuation(txt):
 
 @text.command("remove-stop-words")
 @click.argument("txt")
-@click.option("--stop-words", "-s", multiple=True,
-              help="Stop word to remove. Can be repeated.")
+@click.option(
+    "--stop-words", "-s", multiple=True, help="Stop word to remove. Can be repeated."
+)
 def remove_stop_words(txt, stop_words):
     click.echo(preprocessing.remove_stop_words(txt, [w.lower() for w in stop_words]))
+
+
 # endregion
+
 
 # region STRUCT
 @cli.group()
@@ -119,8 +153,13 @@ def struct():
 
 @struct.command("shuffle")
 @click.argument("values", nargs=-1)
-@click.option("--seed", type=int, default=None, show_default=True,
-              help="Integer seed to make the shuffle reproducible.")
+@click.option(
+    "--seed",
+    type=int,
+    default=None,
+    show_default=True,
+    help="Integer seed to make the shuffle reproducible.",
+)
 def shuffle(values, seed):
     click.echo(preprocessing.shuffle_list(list(values), seed))
 
@@ -139,6 +178,8 @@ def flatten(matrix):
 @click.argument("values", nargs=-1)
 def unique_values(values):
     click.echo(preprocessing.remove_duplicated_values(list(values)))
+
+
 # endregion
 
 

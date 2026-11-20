@@ -1,12 +1,20 @@
+"""Integration tests for the CLI."""
+
+# pylint: disable=redefined-outer-name
+# pylint: disable=missing-function-docstring
+
+import ast
+
 import pytest
 from click.testing import CliRunner
 
 from src.cli import cli
 
 
-@pytest.fixture
-def runner():
+@pytest.fixture(name="runner")
+def runner_fixture():
     return CliRunner()
+
 
 # region CLEAN
 def test_clean_remove_command(runner):
@@ -74,8 +82,6 @@ def test_clean_group_help_lists_commands(runner):
         (["--new-min", "10", "--new-max", "20", "1", "2", "3"], "[10.0, 15.0, 20.0]"),
     ],
 )
-
-
 def test_numeric_normalize(runner, args, expected):
     result = runner.invoke(cli, ["numeric", "normalize", *args])
     assert result.exit_code == 0
@@ -100,10 +106,12 @@ def test_numeric_invalid_value(runner):
     result = runner.invoke(cli, ["numeric", "standardize", "abc"])
     assert result.exit_code != 0
 
+
 def test_numeric_standardize(runner):
     result = runner.invoke(cli, ["numeric", "standardize", "2", "2", "2"])
     assert result.exit_code == 0
     assert result.output.strip() == "[0.0, 0.0, 0.0]"
+
 
 def test_numeric_log(runner):
     result = runner.invoke(cli, ["numeric", "log", "1"])
@@ -120,12 +128,14 @@ def test_text_tokenize(runner):
     assert result.exit_code == 0
     assert result.output.strip() == "hello world"
 
+
 def test_text_remove_stop_words(runner):
     result = runner.invoke(
         cli, ["text", "remove-stop-words", "The cat and dog", "-s", "the", "-s", "AND"]
     )
     assert result.exit_code == 0
     assert result.output.strip() == "cat dog"
+
 
 def test_text_remove_punctuation(runner):
     result = runner.invoke(cli, ["text", "remove-punctuation", "a-b, c!"])
@@ -138,15 +148,18 @@ def test_text_remove_punctuation(runner):
 
 # region STRUCT
 
+
 def test_struct_flatten(runner):
     result = runner.invoke(cli, ["struct", "flatten", "[[1], [2, 3], [4]]"])
     assert result.exit_code == 0
     assert result.output.strip() == "[1, 2, 3, 4]"
 
+
 def test_struct_flatten_empty(runner):
     result = runner.invoke(cli, ["struct", "flatten", "[]"])
     assert result.exit_code == 0
     assert result.output.strip() == "[]"
+
 
 def test_struct_flatten_invalid_json(runner):
     result = runner.invoke(cli, ["struct", "flatten", "[1, [2, 3], [4]"])
@@ -157,10 +170,11 @@ def test_struct_shuffle_with_seed_is_reproducible(runner):
     args = ["struct", "shuffle", "--seed", "1", "1", "2", "3", "4", "5"]
     assert runner.invoke(cli, args).output == runner.invoke(cli, args).output
 
+
 def test_struct_unique(runner):
     result = runner.invoke(cli, ["struct", "unique", "a", "b", "a"])
     assert result.exit_code == 0
-    assert sorted(eval(result.output.strip())) == ["a", "b"]
+    assert sorted(ast.literal_eval(result.output.strip())) == ["a", "b"]
 
 
 # endregion
